@@ -7,14 +7,23 @@ simulations = 10
 mutation_rate = 0
 crossover_rate = 0
 
+# Knapsack problem parameters
+max_knapsack_weight = 10
+
 # Population
 population = []
 
 
 # Initialize random population
 def initialize_population(size):
+    n = 5
+
     for i in range(size):
-        value = random.random()
+        value = ""
+        for j in range(n):
+            bit = random.randint(0, 1)
+            value += str(bit)
+
         weight = random.randint(1, 10)
         new_individual = individual.Individual(i, value, weight)
         population.append(new_individual)
