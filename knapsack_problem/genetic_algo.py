@@ -3,15 +3,15 @@ import item
 import individual
 
 # Genetic algorithm parameters
-pop_size = 10
-item_num = 5
-simulations = 10
+pop_size = 50
+item_num = 10
+simulations = 20
 tournament_size = 3
 mutation_rate = 0.1
 crossover_rate = 0.5
 
 # Knapsack problem parameters
-max_knapsack_weight = 15
+max_knapsack_weight = 30
 
 # Population
 items = []
@@ -44,7 +44,18 @@ def get_fitness(ind):
     for i in range(len(ind)):
         if ind[i] == '1':
             fitness = fitness + items[i].value
+        # Exceeded maximum knapsack capacity
+        if fitness > max_knapsack_weight:
+            fitness = 0
     return fitness
+
+
+# Compute average fitness of the population
+def get_average_fitness(popul):
+    avg_fitness = 0
+    for i in range(len(popul)):
+        avg_fitness = avg_fitness + popul[i].fitness
+    return avg_fitness/len(popul)
 
 
 # TOURNAMENT SELECTION:
@@ -101,32 +112,43 @@ if __name__ == '__main__':
     print('Items: ')
     print_items(items)
     print()
-    print('Population: ')
-    print_population(population)
+    # print('Population: ')
+    # print_population(population)
+    print()
+    print('Average fitness original population: ', get_average_fitness(population))
     print()
 
-    # SELECTION
-    new_population = []
-    while not len(new_population) == len(population):
-        fittest1 = tournament_selection(population, tournament_size)
-        fittest2 = tournament_selection(population, tournament_size)
-        # print("Fittest individual: ", str(fittest.bitstring) + " fitness: " + str(fittest.fitness))
-        child1 = fittest1
-        child2 = fittest2
+    # GENETIC ALGORITHM
+    for i in range(simulations):
+        new_population = []
+        while not len(new_population) == len(population):
+            fittest1 = tournament_selection(population, tournament_size)
+            fittest2 = tournament_selection(population, tournament_size)
+            # print("Fittest individual: ", str(fittest.bitstring) + " fitness: " + str(fittest.fitness))
+            child1 = fittest1
+            child2 = fittest2
 
-        # CROSSOVER
-        if random.random() < crossover_rate:
-            child1 = crossover(fittest1, fittest2)
-            child2 = crossover(fittest2, fittest1)
+            # CROSSOVER
+            if random.random() < crossover_rate:
+                child1 = crossover(fittest1, fittest2)
+                child2 = crossover(fittest2, fittest1)
 
-            # MUTATION
-            if random.random() < mutation_rate:
-                child1 = mutation(child1)
-                child2 = mutation(child2)
+                # MUTATION
+                if random.random() < mutation_rate:
+                    child1 = mutation(child1)
+                    child2 = mutation(child2)
 
-        new_population.append(child1)
-        new_population.append(child2)
+            new_population.append(child1)
+            new_population.append(child2)
 
-    print('New Population after Selection: ')
-    print_population(new_population)
-    print()
+        population = new_population
+        average_fitness = get_average_fitness(new_population)
+
+        print('New average fitness simulation' + str(i) + ': ', average_fitness)
+        print()
+
+        # Stop when the average fitness is equal to the maximum capacity of the knapsack
+        if average_fitness == max_knapsack_weight:
+            print('Success!!!')
+            print('Optimal Solution: ', new_population[0].bitstring)
+            break
