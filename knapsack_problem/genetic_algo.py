@@ -1,10 +1,12 @@
 import random
 import item
+import individual
 
 # Genetic algorithm parameters
 pop_size = 10
 item_num = 5
 simulations = 10
+tournament_size = 3
 mutation_rate = 0
 crossover_rate = 0
 
@@ -32,7 +34,7 @@ def initialize_population(size, n):
         for j in range(n):
             bit = random.randint(0, 1)
             new_individual = new_individual + str(bit)
-        population.append(new_individual)
+        population.append(individual.Individual(new_individual, get_fitness(new_individual)))
     return population
 
 
@@ -45,29 +47,32 @@ def get_fitness(individual):
     return fitness
 
 
-def get_population_fitness(popul):
-    fitness_vals = []
-    for i in range(len(popul)):
-        fitness = get_fitness(popul[i])
-        fitness_vals.append(fitness)
-    return fitness_vals
+# Tournament selection:
+# 1. Select random subset of the population
+# 2. Return fittest individual of the tournament
+def tournament_selection(popul, size):
+    tournament = random.sample(popul, size)
+    # Order the individuals in ascending order = the first one is the least fit
+    tournament.sort(key=lambda x: x.fitness)
+    # print_population(tournament)
+    return tournament[size-1]
 
 
 def print_items(item_list):
     for i in range(len(item_list)):
-        ind = "value: " + str(item_list[i].value) + " | weight: " + str(item_list[i].weight)
-        print(ind)
+        it = "value: " + str(item_list[i].value) + " | weight: " + str(item_list[i].weight)
+        print(it)
 
 
 def print_population(popul):
     for i in range(len(popul)):
-        print("Individual " + str(i) + ": ", popul[i])
+        ind = "Individual " + str(i) + ": " + str(popul[i].bitstring) + " | fitness: " + str(popul[i].fitness)
+        print(ind)
 
 
 if __name__ == '__main__':
     items = initialize_items(item_num)
     population = initialize_population(pop_size, item_num)
-    fitness_values = get_population_fitness(population)
 
     print('Items: ')
     print_items(items)
@@ -75,5 +80,7 @@ if __name__ == '__main__':
     print('Population: ')
     print_population(population)
     print()
-    print('Fitness Values: ')
-    print_population(fitness_values)
+
+    # SELECTION
+    fittest = tournament_selection(population, tournament_size)
+    print("Fittest individual: ", str(fittest.bitstring) + " fitness: " + str(fittest.fitness))
