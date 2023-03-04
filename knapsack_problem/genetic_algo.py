@@ -1,43 +1,65 @@
 import random
-import individual
+import item
 
 # Genetic algorithm parameters
 pop_size = 10
+item_num = 5
 simulations = 10
 mutation_rate = 0
 crossover_rate = 0
 
 # Knapsack problem parameters
-max_knapsack_weight = 10
+max_knapsack_weight = 15
 
 # Population
+items = []
 population = []
 
 
-# Initialize random population
-def initialize_population(size):
-    n = 5
+# Initialize n items randomly
+def initialize_items(n):
+    for i in range(n):
+        weight = random.randint(1, 10)
+        new_item = item.Item(i+1, weight)
+        items.append(new_item)
+    return items
 
+
+# Initialize individuals of the population randomly
+def initialize_population(size, n):
     for i in range(size):
-        value = ""
+        new_individual = ''
         for j in range(n):
             bit = random.randint(0, 1)
-            value += str(bit)
-
-        weight = random.randint(1, 10)
-        new_individual = individual.Individual(i, value, weight)
+            new_individual = new_individual + str(bit)
         population.append(new_individual)
-
     return population
+
+
+# Calculate the fitness of one individual based on the items (0 = excluded, 1 = included)
+def get_fitness(individual):
+    return
+
+
+def print_items(item_list):
+    for i in range(len(item_list)):
+        ind = "value: " + str(item_list[i].value) + " | weight: " + str(item_list[i].weight)
+        print(ind)
 
 
 def print_population(popul):
     for i in range(len(popul)):
-        ind = "id : " + str(popul[i].id) + " | value: " + str(popul[i].value) + " | weight: " + str(popul[i].weight)
-        print(ind)
+        print("Individual " + str(i) + ": ", popul[i])
 
 
 if __name__ == '__main__':
-    population = initialize_population(pop_size)
+    items = initialize_items(item_num)
+    population = initialize_population(pop_size, item_num)
+
+    print('Items: ')
+    print_items(items)
+    print()
+    print('Population: ')
     print_population(population)
+
 
