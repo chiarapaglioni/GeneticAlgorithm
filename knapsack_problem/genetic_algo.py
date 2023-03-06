@@ -5,8 +5,8 @@ import individual
 # Genetic algorithm parameters
 pop_size = 50
 item_num = 10
-simulations = 20
-tournament_size = 3
+simulations = 100
+tournament_size = 5
 mutation_rate = 0.1
 crossover_rate = 0.5
 
@@ -105,6 +105,7 @@ def print_population(popul):
         print(ind)
 
 
+# TODO: Fix fitness to adapt to weight and not value!!!
 if __name__ == '__main__':
     items = initialize_items(item_num)
     population = initialize_population(pop_size, item_num)
